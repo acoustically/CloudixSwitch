@@ -5,7 +5,7 @@ import button2_thread
 import battery_check_thread
 import wifi_check_thread
 from server_connection_thread import ServerConnectionThread
-import speach_recognition_thread
+from speech_recognition_thread import SpeechRecognitionThread
 
 class Switch:
     """
@@ -27,7 +27,9 @@ class Switch:
     def start(self):
         message_queue = queue.Queue()
         server_connection_thread = ServerConnectionThread(message_queue)
+        speech_recognition_thread = SpeechRecognitionThread(message_queue)
         server_connection_thread.start()
+        speech_recognition_thread.start()
         self.process_message(message_queue)
 
     def process_message(self, message_queue):
