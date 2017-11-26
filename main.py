@@ -1,11 +1,10 @@
 import queue
 import message
-import button1_thread
-import button2_thread
 import battery_check_thread
 import wifi_check_thread
 from server_connection_thread import ServerConnectionThread
-from speech_recognition_thread import SpeechRecognitionThread
+#from speech_recognition_thread import SpeechRecognitionThread
+from button_observing_thread import ButtonObservingThread
 
 class Switch:
     """
@@ -21,15 +20,16 @@ class Switch:
     WIFI_HIGH
     """
     def __init__(self):
-        self.button1_power = -1
-        self.button2_power = -1
+        self.is_turn_on = [-1, -1]
   
     def start(self):
         message_queue = queue.Queue()
         server_connection_thread = ServerConnectionThread(message_queue)
-        speech_recognition_thread = SpeechRecognitionThread(message_queue)
+        #speech_recognition_thread = SpeechRecognitionThread(message_queue)
+        button_observing_thread = ButtonObservingThread(message_queue, self.is_turn_on)
         server_connection_thread.start()
-        speech_recognition_thread.start()
+        #speech_recognition_thread.start()
+        button_observing_thread.start()
         self.process_message(message_queue)
 
     def process_message(self, message_queue):
@@ -61,23 +61,23 @@ class Switch:
                     self.turn_up_wifi_led()
 
     def turn_on_button_1(self):
-        if self.button1_power != 1:
-            self.button1_power = 1
+        if self.is_turn_on[0] != 1:
+            self.is_turn_on[0] = 1
             print("turn_on_button_1")
        
     def turn_off_button_1(self):
-        if self.button1_power != 0:
-            self.button1_power = 0
+        if self.is_turn_on[0] != 0:
+            self.is_turn_on[0] = 0
             print("turn_off_button_1")
 
     def turn_on_button_2(self):
-        if self.button2_power != 1:
-            self.button2_power = 1
+        if self.is_turn_on[1] != 1:
+            self.is_turn_on[1] = 1
             print("turn_on_button_2")
 
     def turn_off_button_2(self):
-        if self.button2_power != 0:
-            self.button2_power = 0
+        if self.is_turn_on[1] != 0:
+            self.is_turn_on[1] = 0
             print("turn_off_button_2")
 
     def turn_down_battery_led():
