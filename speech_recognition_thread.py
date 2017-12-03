@@ -13,7 +13,7 @@ import time
 
 import message
 
-RATE = 16000
+RATE = 44100
 CHUNK = int(RATE / 10)  # 100ms
 
 
@@ -165,6 +165,7 @@ class SpeechRecognitionThread(threading.Thread):
             overwrite_chars = ' ' * (num_chars_printed[0] - len(transcript))
               
             result_text = transcript[num_chars_printed[0]:]
+            print(result_text)
             if result_text.find("위쪽 불 켜 줘") != -1:
                 self.message_queue.put(message.BUTTON_1_TURN_ON)
             elif result_text.find("아래쪽 불 켜 줘") != -1:
@@ -176,6 +177,4 @@ class SpeechRecognitionThread(threading.Thread):
             
 
             t.set_text(transcript)
-
-
 
