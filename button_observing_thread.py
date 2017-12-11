@@ -26,6 +26,7 @@ class ButtonObservingThread(threading.Thread):
                         self.message_queue.put(message.BUTTON_2_TURN_ON)
                     else:
                         self.message_queue.put(message.BUTTON_2_TURN_OFF)
+
                 time.sleep(0.15)
         except:
             GPIO.cleanup() 

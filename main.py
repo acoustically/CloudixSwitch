@@ -3,8 +3,9 @@ import message
 import battery_check_thread
 import wifi_check_thread
 from server_connection_thread import ServerConnectionThread
-from speech_recognition_thread import SpeechRecognitionThread
+#from speech_recognition_thread import SpeechRecognitionThread
 from button_observing_thread import ButtonObservingThread
+from wifi_check_thread import WiFiCheckThread
 import RPi.GPIO as GPIO
 import time
 
@@ -22,10 +23,8 @@ class Switch:
     WIFI_HIGH
     """
     """
-    GPIO 6 : BUTTON_1_TURN_ON
-    GPIO 13 : BUTTON_1_TURN_OFF
-    GPIO 19 : BUTTON_2_TURN_ON
-    GPIO 26 : BUTTON_2_TURN_OFF
+    GPIO 19 : BUTTON_1_SERVO
+    GPIO 26 : BUTTON_2_SERVO
     """
     def __init__(self):
         self.is_turn_on = [-1, -1]
@@ -33,23 +32,23 @@ class Switch:
  
     def __set_gpio(self):
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(6, GPIO.OUT)
-        GPIO.setup(13, GPIO.OUT)
         GPIO.setup(19, GPIO.OUT)
         GPIO.setup(26, GPIO.OUT)
-        self.button_1_turn_on_servo = GPIO.PWM(6, 50)
-        self.button_1_turn_off_servo = GPIO.PWM(13, 50)
-        self.button_2_turn_on_servo = GPIO.PWM(19, 50)
-        self.button_2_turn_off_servo = GPIO.PWM(26, 50)
+        self.button_1_servo = GPIO.PWM(19, 50)
+        self.button_1_servo.start(5)
+        self.button_2_servo = GPIO.PWM(26, 50)
+        self.button_2_servo.start(5)
 
     def start(self):
         message_queue = queue.Queue()
         server_connection_thread = ServerConnectionThread(message_queue)
-        speech_recognition_thread = SpeechRecognitionThread(message_queue)
+       # speech_recognition_thread = SpeechRecognitionThread(message_queue)
         button_observing_thread = ButtonObservingThread(message_queue, self.is_turn_on)
+        wifi_check_thread = WiFiCheckThread()
         server_connection_thread.start()
-        speech_recognition_thread.start()
+       # speech_recognition_thread.start()
         button_observing_thread.start()
+        wifi_check_thread.start()
         self.process_message(message_queue)
 
     def process_message(self, message_queue):
@@ -81,34 +80,44 @@ class Switch:
                     elif msg == message.WIFI_HIGH:    
                         self.turn_up_wifi_led()
             except:
-                self.button_1_turn_on_servo.stop()
-                self.button_1_turn_off_servo.stop()
-                self.button_2_turn_on_servo.stop()
-                self.button_2_turn_off_servo.stop()
+                self.button_1_servo.stop()
+                self.button_2_servo.stop()
             
     def turn_on_button_1(self):
         if self.is_turn_on[0] != 1:
+            print("turn on b1")
             self.is_turn_on[0] = 1
-            self.button_1_turn_on_servo.ChangeDutyCycle(9)
-            self.button_1_turn_on_servo.ChangeDutyCycle(1)
+            self.button_1_servo.ChangeDutyCycle(9)
+            time.sleep(0.5)
+            self.button_1_servo.ChangeDutyCycle(5)
+            time.sleep(0.5)
        
     def turn_off_button_1(self):
         if self.is_turn_on[0] != 0:
+            print("turn off b1")
             self.is_turn_on[0] = 0
-            self.button_1_turn_off_servo.ChangeDutyCycle(9)
-            self.button_1_turn_off_servo.ChangeDutyCycle(1)
+            self.button_1_servo.ChangeDutyCycle(1)
+            time.sleep(0.5)
+            self.button_1_servo.ChangeDutyCycle(5)
+            time.sleep(0.5)
 
     def turn_on_button_2(self):
         if self.is_turn_on[1] != 1:
+            print("turn on b2")
             self.is_turn_on[1] = 1
-            self.button_2_turn_on_servo.ChangeDutyCycle(9)
-            self.button_2_turn_on_servo.ChangeDutyCycle(1)
+            self.button_2_servo.ChangeDutyCycle(1)
+            time.sleep(0.5)
+            self.button_2_servo.ChangeDutyCycle(5)
+            time.sleep(0.5)
 
     def turn_off_button_2(self):
         if self.is_turn_on[1] != 0:
+            print("turn off b2")
             self.is_turn_on[1] = 0
-            self.button_2_turn_off_servo.ChangeDutyCycle(9)
-            self.button_2_turn_off_servo.ChangeDutyCycle(1)
+            self.button_2_servo.ChangeDutyCycle(9)
+            time.sleep(0.5)
+            self.button_2_servo.ChangeDutyCycle(5)
+            time.sleep(0.5)
 
     def turn_down_battery_led():
         #TODO
