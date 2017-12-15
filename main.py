@@ -3,7 +3,7 @@ import message
 import battery_check_thread
 import wifi_check_thread
 from server_connection_thread import ServerConnectionThread
-from speech_recognition_thread import SpeechRecognitionThread
+#from speech_recognition_thread import SpeechRecognitionThread
 from button_observing_thread import ButtonObservingThread
 from wifi_check_thread import WiFiCheckThread
 import RPi.GPIO as GPIO
@@ -45,11 +45,11 @@ class Switch:
     def start(self):
         message_queue = queue.Queue()
         server_connection_thread = ServerConnectionThread(message_queue)
-        speech_recognition_thread = SpeechRecognitionThread(message_queue)
+#        speech_recognition_thread = SpeechRecognitionThread(message_queue)
         button_observing_thread = ButtonObservingThread(message_queue, self.is_turn_on)
         wifi_check_thread = WiFiCheckThread()
         server_connection_thread.start()
-        speech_recognition_thread.start()
+#        speech_recognition_thread.start()
         button_observing_thread.start()
         wifi_check_thread.start()
         self.process_message(message_queue)
