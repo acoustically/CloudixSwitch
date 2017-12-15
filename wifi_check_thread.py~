@@ -25,27 +25,33 @@ class WiFiCheckThread(threading.Thread):
                 return int(0)
     def run(self):
         while True:
+            print(self.get_quality())
             if self.get_quality() > 90:
+                print("wifi level 4")
                 GPIO.output(12, True)
                 GPIO.output(16, True)
                 GPIO.output(20, True)
                 GPIO.output(21, True)
             elif self.get_quality() > 70:
+                print("wifi level 3")
                 GPIO.output(12, True)
                 GPIO.output(16, True)
                 GPIO.output(20, True)
                 GPIO.output(21, False)
             elif self.get_quality() > 50:
+                print("wifi level 2")
                 GPIO.output(12, True)
                 GPIO.output(16, True)
                 GPIO.output(20, False)
                 GPIO.output(21, False)
             elif self.get_quality() > 30:
+                print("wifi level 1")
                 GPIO.output(12, True)
                 GPIO.output(16, False)
                 GPIO.output(20, False)
                 GPIO.output(21, False)
             else:
+                print("wifi level 0")
                 GPIO.output(12, False)
                 GPIO.output(16, False)
                 GPIO.output(20, False)

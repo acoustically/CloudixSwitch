@@ -34,5 +34,5 @@ class ServerConnectionThread(Thread):
                 elif res[1]["power"] == 0:
                     self.message_queue.put(message.BUTTON_1_TURN_OFF)
                 
-            time.sleep(0.5)
+            time.sleep(1)
             
